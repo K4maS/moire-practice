@@ -145,10 +145,10 @@
           <!-- Список товаров -->
           <li class="catalog__item" v-for="item in getProductsData" :key="item.id">
             <a class="catalog__pic" href="#">
-              <!-- :src="item.colors[0].gallery[0].file.url"
-              :srcset="item.colors[0].gallery[0].file.url" -->
-              <img
 
+              <img
+              :src="item.colors[0].gallery[0].file.url"
+              :srcset="item.colors[0].gallery[0].file.url"
               alt="Название товара">
             </a>
 
