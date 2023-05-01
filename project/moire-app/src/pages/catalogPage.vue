@@ -19,11 +19,14 @@
     </div>
 
     <div class="content__catalog">
-      <catalogFilter v-model.max-price="maxPrice" v-model.min-price="minPrice"
-       v-model.category-id="categoryId"
-        v-model:matertial-ids="materialIds" v-model.season-ids="seasonIds">
+      <catalogFilter v-model:max-price="maxPrice" v-model:min-price="minPrice"
+       v-model:category-id="categoryId"
+        v-model:material-ids="materialIds" v-model:season-ids="seasonIds"
+        v-model:limit="limit">
       </catalogFilter>
-      <section class="catalog">
+      <section class="catalog" v-if="loadingProcess">Згрузка</section>
+      <section class="catalog" v-else-if="loadingError">Ошибка</section>
+      <section class="catalog" v-else>
         <ul class="catalog__list">
           <!-- Список товаров -->
           <catalogItem :catalog-item="item" v-for="item in products" :key="item.id" />
@@ -39,6 +42,7 @@
 
 <script>
 import catalogItem from '@/components/catalogItem.vue';
+import numberFormat from '@/helpers/numberFormat';
 import catalogPagination from '@/components/catalogPagination.vue';
 import catalogFilter from '@/components/catalogFilter.vue';
 import API from '@/config';
@@ -62,20 +66,25 @@ export default {
     };
   },
   computed: {
-
+    // Форматирование цены
+    formattedPrice(price) {
+      return numberFormat(price);
+    },
   },
   methods: {
     // Загрузка продукта
     loadProducts() {
       this.loadingProcess = true;
       this.loadingError = false;
-      return fetch(`${API}/api/products?page=${
-        this.currentPage}&limit=${this.limit}categoryId=${
-        this.categoryId}&materialIds[]=${
-        this.materialIds}&seasonIds[]=${
-        this.seasonIds}&colorIds[]=${
-        this.colorIds}&minPrice=${
-        this.minPrice}&maxPrice=${this.maxPrice}`)
+      return fetch(`${API}/api/products?page=${this.currentPage
+      }categoryId=${this.categoryId
+      }&materialIds[]=${this.materialIds
+      }&seasonIds[]=${this.seasonIds
+      }&colorIds[]=${this.colorIds
+      }&minPrice=${this.minPrice
+      }&maxPrice=${this.maxPrice
+      }&limit=${this.limit
+      }`)
         .then(async (response) => {
           const data = await response.json();
           this.products = data.items;
@@ -95,6 +104,22 @@ export default {
     currentPage() {
       this.loadProducts();
     },
+    materialIds() {
+      this.loadProducts();
+    },
+    seasonIds() {
+      this.loadProducts();
+    },
+    colorIds() {
+      this.loadProducts();
+    },
+    minPrice() {
+      this.loadProducts();
+    },
+    maxPrice() {
+      this.loadProducts();
+    },
+
   },
   components: { catalogItem, catalogPagination, catalogFilter },
   created() {

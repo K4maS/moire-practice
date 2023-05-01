@@ -1,27 +1,30 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
-
+    <router-link class="catalog__pic" :to="{ name: 'product', params: { id: catalogItem.id } }">
       <img alt="Название товара" :src="checkImage(catalogItem)" :srcset="checkImage(catalogItem)">
-    </a>
+    </router-link>
 
     <h3 class="catalog__title">
-      <a href="#">
+      <router-link :to="{ name: 'product', params: { id: catalogItem.id } }">
         {{ catalogItem.title }}
-      </a>
+      </router-link>
     </h3>
 
     <span class="catalog__price">
-      {{ catalogItem.price }} ₽
+      {{ formattedPrice(catalogItem.price) }} ₽
     </span>
     <!-- Выбор цвета товара -->
     <ul class="colors colors--black">
       <li class="colors__item" v-for="color in catalogItem.colors" :key="color.color.id">
-        <label :for="'colors-for-' + catalogItem.slug" class="colors__label">
-          <input class="colors__radio sr-only" type="radio" :name="'colors-for-' + catalogItem.slug"
-            :value="color.color.id"
-            :checked="catalogItem.colors[checkedColor].color.id == color.color.id"
-            @click.prevent="chooseColor(catalogItem.colors, color)"/>
+
+         <!-- eslint-disable-next-line -->
+        <label   class="colors__label">
+          <input class="colors__radio sr-only" type="radio" :id="'colors-for-' + color.color.id"
+          :name="'colors-for-' + catalogItem.slug"
+          :value="checkedColor"
+          :checked="catalogItem.colors[checkedColor].color == color.color"
+          @click="chooseColor(catalogItem.colors, color)"
+          />
           <span class="colors__value" :style="{ background: color.color.code }">
           </span>
         </label>
@@ -31,9 +34,13 @@
 </template>
 
 <script>
+import { toRaw } from 'vue';
+import numberFormat from '@/helpers/numberFormat';
+
 export default {
   data() {
     return { checkedColor: 0 };
+    // prettyPrice:
   },
   props: ['catalogItem'],
   methods: {
@@ -42,18 +49,30 @@ export default {
       if (catalogItem.colors[this.checkedColor].gallery) {
         return catalogItem.colors[this.checkedColor].gallery[0].file.url;
       }
-      return './img/placeholder-2.jpg';
+      return '/img/placeholder-3.png';
     },
     // Выбор цветов товара
     chooseColor(colorsArr, color) {
-      console.log('click');
-      for (let i = -1; i < colorsArr.length; i + 1) {
-        console.log('colorsArr[i].color.id', colorsArr[i].color.id, 'color.color.id', color.color.id);
-        if (colorsArr[i].color.id === color.color.id) {
+      const colorsArrRaw = toRaw(colorsArr);
+      const colorRaw = toRaw(color);
+      let i = 0;
+      colorsArrRaw.forEach((element) => {
+        if (element === colorRaw) {
           this.checkedColor = i;
+          console.log(i);
         }
-      }
+        i += 1;
+      });
+      return this.checkedColor;
     },
+    // Форматирование цены
+    formattedPrice(price) {
+      return numberFormat(price);
+    },
+  },
+
+  computed: {
+
   },
 };
 </script>

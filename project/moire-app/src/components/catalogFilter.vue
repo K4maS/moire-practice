@@ -1,14 +1,14 @@
 <template>
   <aside class="filter">
-    <form class="filter__form form" action="#" method="get">
+    <form class="filter__form form" action="#" method="get" @submit.prevent="submit()">
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label for="min-price" class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" value="0">
+          <input class="form__input" type="text" name="min-price" v-model.number="currentMinPrice">
           <span class="form__value">От</span>
         </label>
         <label for="max-price" class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" value="12345">
+          <input class="form__input" type="text" name="max-price" v-model.number="currentMaxPrice">
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -16,12 +16,16 @@
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label for="category" class="form__label form__label--select">
-          <select class="form__select" type="text" name="category"
+          <select class="form__select" name="category"
           v-model.number="currentCategoryId">
-            <option value="value1">Все категории</option>
-            <option value="value2">Футболки</option>
-            <option value="value3">Бюстгалтеры</option>
-            <option value="value4">Носки</option>
+           <option :value="0"
+             :key="0">
+              Все категории
+            </option>
+            <option :value="category.id" v-for="category in productCategoriesList"
+             :key="category.id">
+              {{ category.title }}
+            </option>
           </select>
         </label>
       </fieldset>
@@ -29,43 +33,14 @@
       <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
-          <li class="check-list__item">
-            <label for="material" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="material" value="лен">
+          <li class="check-list__item" v-for="material in materialsList" :key="material.id" >
+            <!-- eslint-disable-next-line -->
+            <label class="check-list__label">
+              <input class="check-list__check sr-only" v-model="currentMaterialIds"
+               type="checkbox" name="material" :value="material.id">
               <span class="check-list__desc">
-                лен
-                <span>(3)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="material" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="material" value="хлопок">
-              <span class="check-list__desc">
-                хлопок
-                <span>(46)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="material" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="material" value="шерсть">
-              <span class="check-list__desc">
-                шерсть
-                <span>(20)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="material" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="material" value="шелк">
-              <span class="check-list__desc">
-                шелк
-                <span>(30)</span>
+                {{ material.title }}
+                <span>({{material.productsCount}})</span>
               </span>
             </label>
           </li>
@@ -75,43 +50,15 @@
       <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
-          <li class="check-list__item">
-            <label for="collection" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="collection" value="лето" checked="">
+          <li class="check-list__item" v-for="season in seasonList" :key="season.id">
+          <!-- eslint-disable-next-line -->
+            <label class="check-list__label">
+              <input class="check-list__check sr-only" type="checkbox"
+              v-model="currentSeasonIds"
+              :name="season.id" :value="season.id">
               <span class="check-list__desc">
-                лето
-                <span>(2)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="collection" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="collection" value="зима">
-              <span class="check-list__desc">
-                зима
-                <span>(53)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="collection" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="collection" value="весна">
-              <span class="check-list__desc">
-                весна
-                <span>(24)</span>
-              </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label for="collection" class="check-list__label">
-              <input class="check-list__check sr-only"
-              type="checkbox" name="collection" value="осень">
-              <span class="check-list__desc">
-                осень
-                <span>(30)</span>
+                {{ season.title }}
+                <span>({{ season.productsCount }})</span>
               </span>
             </label>
           </li>
@@ -123,21 +70,28 @@
         Применить
       </button>
       <button class="filter__reset button button--second"
-      type="button">
+      type="button" @click="clear()">
         Сбросить
       </button>
     </form>
   </aside>
 </template>
 <script>
+import API from '@/config';
+
 export default {
+
   data() {
     return {
       currentCategoryId: 0,
-      // currentMaterialIds: [],
-      // currentSeasonIds: [],
-      // currentMinPrice: 0,
-      // currentMaxPrice: 0,
+      currentMaterialIds: [],
+      currentSeasonIds: [],
+      currentMinPrice: 0,
+      currentMaxPrice: 0,
+      // Списки
+      seasonList: null,
+      productCategoriesList: 0,
+      materialsList: null,
     };
   },
   props: [
@@ -146,6 +100,7 @@ export default {
     'seasonIds',
     'minPrice',
     'maxPrice',
+    // 'limit',
   ],
   methods: {
     submit() {
@@ -154,9 +109,54 @@ export default {
       this.$emit('update:seasonIds', this.currentSeasonIds);
       this.$emit('update:minPrice', this.currentMinPrice);
       this.$emit('update:maxPrice', this.currentMaxPrice);
+      // this.$emit('update:limit', 0);
     },
+    clear() {
+      this.$emit('update:categoryId', 0);
+      this.$emit('update:materialIds', null);
+      this.$emit('update:seasonIds', null);
+      this.$emit('update:minPrice', 0);
+      this.$emit('update:maxPrice', 0);
+      // this.$emit('update:limit', 12);
+      this.currentCategoryId = 0;
+      this.currentMaterialIds = [];
+      this.currentSeasonIds = [];
+      this.currentMinPrice = 0;
+      this.currentMaxPrice = 0;
+    },
+    // Получение списка сезонов
+    getSeasonsList() {
+      return fetch(`${API}/api/seasons`)
+        .then(async (response) => {
+          const json = await response.json();
+          this.seasonList = await json.items;
+        });
+    },
+    // Получение списка материалов
+    getMaterialsList() {
+      return fetch(`${API}/api/materials`)
+        .then(async (response) => {
+          const json = await response.json();
+          this.materialsList = await json.items;
+        });
+    },
+    // Получение списка категорий
+    getProductCategoriesList() {
+      return fetch(`${API}/api/productCategories`)
+        .then(async (response) => {
+          const json = await response.json();
+          this.productCategoriesList = await json.items;
+        });
+    },
+  },
+  computed: {
 
   },
 
+  created() {
+    this.getSeasonsList();
+    this.getMaterialsList();
+    this.getProductCategoriesList();
+  },
 };
 </script>

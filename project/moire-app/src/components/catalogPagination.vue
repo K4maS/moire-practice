@@ -30,8 +30,6 @@
 <script>
 export default {
   props: ['modelValue', 'pages'],
-  data() {
-  },
   methods: {
     pageChanging(page) {
       if (page === 'prev') {

@@ -3,6 +3,8 @@ import API from '@/config';
 
 export default createStore({
   state: {
+    userAccessKey: null,
+    cartProducts: [],
     productsData: [],
     pages: 0,
     page: 0,
@@ -10,6 +12,14 @@ export default createStore({
     loadingError: false,
   },
   getters: {
+    // Передача ключа доступа
+    getUserAccessKey(state) {
+      return state.userAccessKey;
+    },
+    // Передача количества товаров в корзине
+    getCartProducts(state) {
+      return state.cartProducts;
+    },
     // Передача списка товаров
     getProductsData(state) {
       return state.productsData;
@@ -30,10 +40,25 @@ export default createStore({
     getLoadingError(state) {
       return state.loadingError;
     },
+    // Получить сумму цен корзины
+    getCartTotalPrice(state) {
+      let totalPrice = 0;
+      state.cartProducts.forEach((element) => {
+        totalPrice += element.price * element.quantity;
+      });
+      return totalPrice;
+    },
   },
 
   mutations: {
-
+    // Изменение ключа доступа
+    updateUserAccessKey(state, userAccessKey) {
+      state.userAccessKey = userAccessKey;
+    },
+    // Изменение количества товаров в корзине
+    updateCartProducts(state, cartProducts) {
+      state.cartProducts = cartProducts;
+    },
     // Изменение продуктов
     updateProductsData(state, productsData) {
       state.productsData = productsData;
@@ -58,6 +83,119 @@ export default createStore({
     },
   },
   actions: {
+    // Загрузка корзины
+    loadBasket(context) {
+      context.commit('updateLoadingProcess', true);
+      context.commit('updateLoadingError', false);
+      return fetch(`${API}/api/baskets?userAccessKey=${context.state.userAccessKey}`)
+        .then(async (response) => {
+          const data = await response.json();
+          context.commit('updateCartProducts', data.items);
+          if (!context.state.userAccessKey) {
+            localStorage.setItem('userAccessKey', data.user.accessKey);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          context.commit('updateLoadingError', true);
+        })
+        .finally(() => {
+          context.commit('updateLoadingProcess', false);
+        });
+    },
+    // Добавление данных в корзину
+    addToBasket(context, {
+      productId,
+      colorId,
+      sizeId,
+      quantity,
+    }) {
+      context.commit('updateLoadingProcess', true);
+      context.commit('updateLoadingError', false);
+      console.log(
+        productId,
+        colorId,
+        sizeId,
+        quantity,
+      );
+      return fetch(`${API}/api/baskets/products?userAccessKey=${context.state.userAccessKey}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          productId,
+          colorId,
+          sizeId,
+          quantity,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          context.commit('updateCartProducts', data.items);
+          if (!context.state.userAccessKey) {
+            localStorage.setItem('userAccessKey', data.user.accessKey);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          context.commit('updateLoadingError', true);
+        })
+        .finally(() => {
+          context.commit('updateLoadingProcess', false);
+        });
+    },
+    // Изменение количества продуктов в корзие
+    changeProductInBasket(context, { basketItemId, quantity }) {
+      context.commit('updateLoadingProcess', true);
+      context.commit('updateLoadingError', false);
+      console.log(basketItemId);
+      return fetch(`${API}/api/baskets/products?userAccessKey=${context.state.userAccessKey}`, {
+        method: 'PUT',
+        body: JSON.stringify({ basketItemId, quantity }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          context.commit('updateCartProducts', data.items);
+        })
+        .catch((error) => {
+          console.log(error);
+          context.commit('updateLoadingError', true);
+        })
+        .finally(() => {
+          context.commit('updateLoadingProcess', false);
+        });
+    },
+    // Удаление продукта из корзины
+    deleteFromBasket(context, basketItemId) {
+      context.commit('updateLoadingProcess', true);
+      context.commit('updateLoadingError', false);
+      console.log(basketItemId);
+      return fetch(`${API}/api/baskets/products?userAccessKey=${context.state.userAccessKey}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ basketItemId }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+      })
+        .then(async (response) => {
+          const data = await response.json();
+          context.commit('updateCartProducts', data.items);
+        })
+        .catch((error) => {
+          console.log(error);
+          context.commit('updateLoadingError', true);
+        })
+        .finally(() => {
+          context.commit('updateLoadingProcess', false);
+        });
+    },
     // Загрузка продукта
     loadProducts(context, page = 1, limit = 12) {
       context.commit('updateLoadingProcess', true);
@@ -68,7 +206,6 @@ export default createStore({
           context.commit('updateProductsData', data.items);
           context.commit('updatePages', data.pagination.pages);
           context.commit('updatePage', data.pagination.page);
-          console.log('response', data.items[0].colors[0].gallery);
         })
         .catch((error) => {
           console.log(error);
