@@ -157,7 +157,6 @@ export default createStore({
         headers: {
           'Content-Type': 'application/json',
         },
-
       })
         .then(async (response) => {
           const data = await response.json();

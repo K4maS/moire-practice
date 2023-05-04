@@ -9,7 +9,7 @@
           </router-link>
 
         </li>
-        <li class="breadcrumbs__item">
+        <li class="breadcrumbs__item" v-if="getCartProducts">
           <a class="breadcrumbs__link">
             Корзина
           </a>
@@ -26,7 +26,14 @@
       </div>
     </div>
 
-    <section class="cart">
+    <section class="cart" v-if="getLoadingProcess">
+      <spinnerBlock>
+      </spinnerBlock>
+    </section>
+    <section class="cart" v-else-if="getLoadingError" >
+      <refreshBlock @click="refresh()"></refreshBlock>
+    </section>
+    <section class="cart" v-else>
       <form class="cart__form form" action="#" method="POST" @submit.prevent="ordering()">
         <div class="cart__field">
           <ul class="cart__list">
@@ -43,35 +50,56 @@
           <p class="cart__price">
             Итого: <span>{{ formattedPrice(getCartTotalPrice) }} ₽</span>
           </p>
-          <router-link class="cart__button button button--primery"
-           type="submit" :to="{ name: 'ordering' }" style="text-align: center;">
+          <button class="cart__button button button--primery"
+           type="submit" v-if="getCartProducts.length">
              Оформить заказ
-          </router-link>
+          </button>
         </div>
       </form>
     </section>
   </main>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 import cartItem from '@/components/cartItem.vue';
+import spinnerBlock from '@/components/spinnerBlock.vue';
+import refreshBlock from '@/components/refreshBlock.vue';
 
 export default {
   computed: {
-    ...mapGetters(['getCartProducts', 'getCartTotalPrice']),
+    ...mapGetters([
+      'getCartProducts',
+      'getCartTotalPrice',
+      'getLoadingProcess',
+      'getLoadingError',
+    ]),
   },
   methods: {
+    ...mapActions(['loadBasket']),
     // Форматирование цены
     formattedPrice(price) {
       return numberFormat(price);
     },
     // Оформление заказа
-    ordering() {},
+    ordering() {
+      this.$router.push({ name: 'ordering' });
+    },
+    refresh() {
+      this.loadBasket();
+    },
   },
   components: {
     cartItem,
+    spinnerBlock,
+    refreshBlock,
   },
 
 };
 </script>
+
+<style>
+  .loading {
+    grid-column: span 2;
+  }
+</style>

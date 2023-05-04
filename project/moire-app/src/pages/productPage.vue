@@ -10,11 +10,11 @@
 
         </li>
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{ name: 'catalog'}">
+          <router-link class="breadcrumbs__link" :to="{ name: 'catalog'}" v-if="product">
             {{ product.category.title }}
             </router-link>
         </li>
-        <li class="breadcrumbs__item">
+        <li class="breadcrumbs__item"  v-if="product">
           <a class="breadcrumbs__link">
             {{ product.title }}
             </a>
@@ -23,10 +23,10 @@
       </ul>
     </div>
     <section class="item" v-if="loadingProcess">
-      Згрузка
+      <spinnerBlock class="loading"></spinnerBlock>
     </section>
     <section class="item" v-else-if="loadingError">
-      Ошибка
+      <refreshBlock class="loading" @click="refresh()"></refreshBlock>
     </section>
     <section class="item" v-else>
       <div class="item__pics pics">
@@ -112,10 +112,10 @@
                  <!-- eslint-disable-next-line -->
                 <label class="form__label form__label--small form__label--select">
                   <select class="form__select" type="text" name="category"
-                  v-model.number="checkedSizePositionInList"
+                  v-model.number="checkedSizeId"
                   >
-                    <option :value="checkedSizePositionInList" v-for="size in product.sizes"
-                    @click="chooseSize(product.sizes, size)"
+                    <option :value="size.id" v-for="size in product.sizes"
+                    :checked="product.sizes[checkedSizeId] == size"
                     :key="size.id">
                      {{ size.title }}
                     </option>
@@ -161,6 +161,8 @@ import { toRaw } from 'vue';
 import aboutItem from '@/components/aboutItem.vue';
 import aboutDelivery from '@/components/aboutDelivery.vue';
 import numberFormat from '@/helpers/numberFormat';
+import spinnerBlock from '@/components/spinnerBlock.vue';
+import refreshBlock from '@/components/refreshBlock.vue';
 
 export default {
   data() {
@@ -172,7 +174,6 @@ export default {
       // Данные для заказа
       checkedColorPositionInList: 0,
       count: 1,
-      checkedSizePositionInList: 0,
       checkedSizeId: 0,
     };
   },
@@ -195,6 +196,7 @@ export default {
         .then(async (response) => {
           const data = await response.json();
           this.product = data;
+          this.checkedSizeId = data.sizes[0].id;
         })
         .catch(() => {
           this.loadingError = true;
@@ -217,20 +219,7 @@ export default {
       });
       return this.checkedColorPositionInList;
     },
-    // При нажатии выбора размера
-    chooseSize(sizesArr, size) {
-      const sizesArrRaw = toRaw(sizesArr);
-      const sizeRaw = toRaw(size);
-      let i = 0;
-      sizesArrRaw.forEach((element) => {
-        if (element.id === sizeRaw.id) {
-          this.checkedSizePositionInList = i;
-          console.log(i);
-        }
-        i += 1;
-      });
-      return this.checkedSizePositionInList;
-    },
+
     // При нажатии на кнопки + и -
     productCountChanging(value) {
       if (value === '+') {
@@ -254,7 +243,7 @@ export default {
       console.log(
         this.product.id,
         this.product.colors[this.checkedColorPositionInList].color.id,
-        this.product.sizes[this.checkedSizePositionInList].id,
+        this.checkedSizeId,
         this.count,
       );
       const userAccesKey = localStorage.getItem('userAccessKey');
@@ -264,7 +253,7 @@ export default {
       this.addToBasket({
         productId: this.product.id,
         colorId: this.product.colors[this.checkedColorPositionInList].color.id,
-        sizeId: this.product.sizes[this.checkedSizePositionInList].id,
+        sizeId: this.checkedSizeId,
         quantity: this.count,
       });
     },
@@ -272,6 +261,9 @@ export default {
     // Форматирование цены
     formattedPrice(price) {
       return numberFormat(price);
+    },
+    refresh() {
+      this.loadProduct();
     },
   },
 
@@ -284,6 +276,14 @@ export default {
   components: {
     aboutItem,
     aboutDelivery,
+    spinnerBlock,
+    refreshBlock,
   },
 };
 </script>
+
+<style>
+  .loading {
+    grid-column: span 2;
+  }
+</style>

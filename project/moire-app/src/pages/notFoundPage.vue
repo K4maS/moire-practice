@@ -13,11 +13,13 @@
           </a>
         </li>
       </ul>
-
       <div class="content__row">
         <h1 class="content__title">
-          Ничего не найдено
-        </h1>
+        Страница не найдена.
+      </h1>
+      <span class="content__info">
+        К сожалению данной страницы не существует, проверьте, верно ли введена ссылка.
+      </span>
       </div>
     </div>
   </main>

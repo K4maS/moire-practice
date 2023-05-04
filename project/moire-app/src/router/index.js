@@ -30,7 +30,7 @@ const routes = [
   {
     name: 'success',
     component: successOrderingPage,
-    path: '/success',
+    path: '/success/:id',
   },
   {
     name: 'name',

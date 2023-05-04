@@ -38,7 +38,7 @@
 export default {
 
   computed: {
-    // ...mapGetters('getLoadingProcess', 'getLoadingError'),
+
   },
   methods: {
 

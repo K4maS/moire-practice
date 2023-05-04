@@ -14,7 +14,11 @@
                   <i :style="{ background: product.color.color.code }"></i>
                   {{ product.color.color.title }}
                 </span>
+                <span class="product__info product__info--color">
+                  Размер: {{ product.size.title }}
+                </span>
               </p>
+
               <span class="product__code">
                 Артикул: {{ product.product.id }}
               </span>

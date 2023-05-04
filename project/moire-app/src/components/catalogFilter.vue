@@ -70,7 +70,8 @@
         Применить
       </button>
       <button class="filter__reset button button--second"
-      type="button" @click="clear()">
+      type="button" @click="clear()" v-if="currentCategoryId || currentMinPrice ||
+       currentMaxPrice || currentMaterialIds.length ||currentSeasonIds.length">
         Сбросить
       </button>
     </form>

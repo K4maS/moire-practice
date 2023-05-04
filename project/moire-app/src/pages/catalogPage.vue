@@ -24,8 +24,13 @@
         v-model:material-ids="materialIds" v-model:season-ids="seasonIds"
         v-model:limit="limit">
       </catalogFilter>
-      <section class="catalog" v-if="loadingProcess">Згрузка</section>
-      <section class="catalog" v-else-if="loadingError">Ошибка</section>
+
+      <section class="catalog" v-if="loadingProcess">
+        <spinnerBlock></spinnerBlock>
+      </section>
+      <section class="catalog" v-else-if="loadingError">
+        <refreshBlock @click="refresh()"></refreshBlock>
+      </section>
       <section class="catalog" v-else>
         <ul class="catalog__list">
           <!-- Список товаров -->
@@ -45,6 +50,8 @@ import catalogItem from '@/components/catalogItem.vue';
 import numberFormat from '@/helpers/numberFormat';
 import catalogPagination from '@/components/catalogPagination.vue';
 import catalogFilter from '@/components/catalogFilter.vue';
+import spinnerBlock from '@/components/spinnerBlock.vue';
+import refreshBlock from '@/components/refreshBlock.vue';
 import API from '@/config';
 
 export default {
@@ -77,7 +84,7 @@ export default {
       this.loadingProcess = true;
       this.loadingError = false;
       return fetch(`${API}/api/products?page=${this.currentPage
-      }categoryId=${this.categoryId
+      }&categoryId=${this.categoryId
       }&materialIds[]=${this.materialIds
       }&seasonIds[]=${this.seasonIds
       }&colorIds[]=${this.colorIds
@@ -98,6 +105,9 @@ export default {
         .finally(() => {
           this.loadingProcess = false;
         });
+    },
+    refresh() {
+      this.loadProducts();
     },
   },
   watch: {
@@ -121,7 +131,13 @@ export default {
     },
 
   },
-  components: { catalogItem, catalogPagination, catalogFilter },
+  components: {
+    catalogItem,
+    catalogPagination,
+    catalogFilter,
+    spinnerBlock,
+    refreshBlock,
+  },
   created() {
     this.loadProducts();
   },
