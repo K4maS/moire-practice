@@ -4,13 +4,18 @@ import productPage from '@/pages/productPage.vue';
 import productsCartPage from '@/pages/productsCartPage.vue';
 import notFoundPage from '@/pages/notFoundPage.vue';
 import orderingPage from '@/pages/orderingPage.vue';
-import successOrderingPage from '@/pages/successOrderingPage.vue';
+import orderInfoPage from '@/pages/orderInfoPage.vue';
 
 const routes = [
   {
     name: 'catalog',
     component: catalogPage,
     path: '/',
+  },
+  {
+    name: 'category',
+    component: catalogPage,
+    path: '/category/:id',
   },
   {
     name: 'product',
@@ -28,9 +33,9 @@ const routes = [
     path: '/ordering',
   },
   {
-    name: 'success',
-    component: successOrderingPage,
-    path: '/success/:id',
+    name: 'order',
+    component: orderInfoPage,
+    path: '/order/:id',
   },
   {
     name: 'name',

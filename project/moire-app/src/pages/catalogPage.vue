@@ -139,6 +139,9 @@ export default {
     refreshBlock,
   },
   created() {
+    if (this.$route.params.id) {
+      this.categoryId = this.$route.params.id;
+    }
     this.loadProducts();
   },
 };

@@ -37,15 +37,12 @@ export default {
   }
   .spinner__image svg {
     fill: #e14c85b7;
-    animation: rotation 1.3s linear infinite;
+    transform: rotate(0deg);
+    animation: rotation 3s linear infinite;
   }
 
   @keyframes rotation {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+    0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
   }
 </style>

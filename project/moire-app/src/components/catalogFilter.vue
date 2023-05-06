@@ -158,6 +158,9 @@ export default {
     this.getSeasonsList();
     this.getMaterialsList();
     this.getProductCategoriesList();
+    if (this.$route.params.id) {
+      this.currentCategoryId = this.$route.params.id;
+    }
   },
 };
 </script>

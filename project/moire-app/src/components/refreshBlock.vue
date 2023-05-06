@@ -57,7 +57,7 @@ export default {
 
 }
 .refresh-spinner__image svg:hover {
-  animation: rotation .5s linear;
+  animation: rotationRefresh .5s linear;
   fill: #e14c85a0;
 }
 
@@ -65,7 +65,7 @@ export default {
   fill: #e14c85;
 }
 
-@keyframes rotation {
+@keyframes rotationRefresh {
   from {
     transform: rotate(1deg);
   }

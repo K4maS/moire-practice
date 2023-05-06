@@ -10,7 +10,8 @@
 
         </li>
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{ name: 'catalog'}" v-if="product">
+          <router-link class="breadcrumbs__link" :to="{ name: 'category',
+           params: { id: product.category.id }}" v-if="product">
             {{ product.category.title }}
             </router-link>
         </li>
@@ -26,7 +27,8 @@
       <spinnerBlock class="loading"></spinnerBlock>
     </section>
     <section class="item" v-else-if="loadingError">
-      <refreshBlock class="loading" @click="refresh()"></refreshBlock>
+      <refreshBlock class="loading" @click="refresh()">
+      </refreshBlock>
     </section>
     <section class="item" v-else>
       <div class="item__pics pics">
@@ -126,7 +128,16 @@
 
             <button class="item__button button button--primery" type="submit"
             :disabled="loadingProcess">
+            <span v-if="$store.state.loadingProcess">
+              Добавляется
+            </span>
+            <span v-else-if="$store.state.loadingError">
+              Не добавлено
+            </span>
+            <span v-else>
               В корзину
+            </span>
+
             </button>
           </form>
         </div>

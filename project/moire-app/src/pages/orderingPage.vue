@@ -130,7 +130,7 @@
               <span>Артикул: {{ product.product.id }}</span>
             </li>
           </ul>
-          <div class="cart__total">
+          <div class="cart__total" v-if="deliveriesList[deliveryTypeId-1]">
             <p >Доставка:
               <b v-if="!deliveriesList[deliveryTypeId-1].price == 0">
                 бесплатно
@@ -231,7 +231,7 @@ export default {
           const data = await response.json();
           this.orderId = data.id;
           this.loadBasket();
-          this.$router.push({ name: 'success', params: { id: this.orderId } });
+          this.$router.push({ name: 'order', params: { id: this.orderId } });
         })
         .catch(() => {
           this.loadingError = true;

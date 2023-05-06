@@ -91,3 +91,8 @@ export default {
   },
 };
 </script>
+<style>
+.product__del {
+  cursor: pointer;
+}
+</style>

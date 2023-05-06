@@ -10,8 +10,13 @@ export default createStore({
     page: 0,
     loadingProcess: false,
     loadingError: false,
+    categoryId: 1,
   },
   getters: {
+    // Передача id категории
+    getCategoryId(state) {
+      return state.categoryId;
+    },
     // Передача ключа доступа
     getUserAccessKey(state) {
       return state.userAccessKey;
@@ -51,6 +56,10 @@ export default createStore({
   },
 
   mutations: {
+    // Изменение id категории
+    updateСategoryId(state, categoryId) {
+      state.categoryId = categoryId;
+    },
     // Изменение ключа доступа
     updateUserAccessKey(state, userAccessKey) {
       state.userAccessKey = userAccessKey;
