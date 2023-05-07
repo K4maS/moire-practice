@@ -128,16 +128,7 @@
 
             <button class="item__button button button--primery" type="submit"
             :disabled="loadingProcess">
-            <span v-if="$store.state.loadingProcess">
-              Добавляется
-            </span>
-            <span v-else-if="$store.state.loadingError">
-              Не добавлено
-            </span>
-            <span v-else>
               В корзину
-            </span>
-
             </button>
           </form>
         </div>
@@ -250,7 +241,9 @@ export default {
       }
     },
     // Отпавка товаров в корзину
-    addToCart() {
+    async addToCart() {
+      const btn = document.querySelector('.item__button.button.button--primery');
+      btn.lastChild.textContent = 'Добавляется';
       console.log(
         this.product.id,
         this.product.colors[this.checkedColorPositionInList].color.id,
@@ -261,12 +254,25 @@ export default {
       if (userAccesKey) {
         this.updateUserAccessKey(userAccesKey);
       }
-      this.addToBasket({
+      await this.addToBasket({
         productId: this.product.id,
         colorId: this.product.colors[this.checkedColorPositionInList].color.id,
         sizeId: this.checkedSizeId,
         quantity: this.count,
       });
+      // Здесь меняется надпись и стиль кнопки после нажатия
+      if (!this.$store.state.loadingError) {
+        btn.lastChild.textContent = 'Добавлено';
+        btn.classList.add('btn-success');
+      } else if (this.$store.state.loadingError) {
+        btn.lastChild.textContent = 'Ошибка';
+        btn.classList.add('btn-error');
+      }
+      setTimeout(() => {
+        btn.lastChild.textContent = 'В корзину';
+        btn.classList.remove('btn-error');
+        btn.classList.remove('btn-success');
+      }, 5000);
     },
 
     // Форматирование цены
@@ -296,5 +302,11 @@ export default {
 <style>
   .loading {
     grid-column: span 2;
+  }
+  .btn-success {
+    background-color: rgb(122, 234, 122);
+  }
+  .btn-error {
+    background-color: rgb(243, 97, 97);
   }
 </style>

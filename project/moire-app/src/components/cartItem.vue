@@ -2,7 +2,7 @@
   <li class="cart__item product">
     <div class="product__pic">
       <img :src="checkImage(product)" width="120" height="120"
-       :srcset="checkImage(product)" :alt="product.product.title">
+      :srcset="checkImage(product)" :alt="product.product.title">
     </div>
     <h3 class="product__title">
       {{ product.product.title }}
@@ -24,16 +24,16 @@
 
     <div class="product__counter form__counter">
       <button type="button" aria-label="Убрать один товар"
-       @click="changeProduct(product.id, product.quantity - 1)">
+      @click="changeProduct(product.id, product.quantity - 1)">
         <svg width="10" height="10" fill="currentColor">
           <use xlink:href="#icon-minus"></use>
         </svg>
       </button>
       <!-- eslint-disable-next-line -->
       <input type="text" name="count" v-model="product.quantity"
-       @blur="changeProduct(product.id, product.quantity)">
+      @blur="changeProduct(product.id, product.quantity)">
       <button type="button" aria-label="Добавить один товар"
-       @click="changeProduct(product.id, product.quantity + 1)">
+      @click="changeProduct(product.id, product.quantity + 1)">
         <svg width="10" height="10" fill="currentColor">
           <use xlink:href="#icon-plus"></use>
         </svg>
@@ -44,8 +44,7 @@
       {{ formattedPrice(product.price * product.quantity) }}
     </b>
 
-    <button class="product__del button-del" type="button"
-     aria-label="Удалить товар из корзины"
+    <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины"
       @click="deleteProduct(product.id)">
       <svg width="20" height="20" fill="currentColor">
         <use xlink:href="#icon-close"></use>

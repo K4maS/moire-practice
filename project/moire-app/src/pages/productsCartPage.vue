@@ -30,15 +30,16 @@
       <spinnerBlock>
       </spinnerBlock>
     </section>
-    <section class="cart" v-if="getLoadingError" >
+    <section class="cart" v-if="getLoadingError">
       <refreshBlock @click="refresh()"></refreshBlock>
     </section>
     <section class="cart" v-else>
-      <form class="cart__form form" action="#" method="POST" @submit.prevent="ordering()">
+      <form class="cart__form form" action="#" method="POST"
+      @submit.prevent="ordering()">
         <div class="cart__field">
           <ul class="cart__list">
-            <cartItem class="cart__item product" :product="product"
-             v-for="product in getCartProducts" :key="product.id">
+            <cartItem class="cart__item product"
+            :product="product" v-for="product in getCartProducts" :key="product.id">
             </cartItem>
           </ul>
         </div>
@@ -52,7 +53,7 @@
           </p>
           <button class="cart__button button button--primery"
            type="submit" v-if="getCartProducts.length">
-             Оформить заказ
+            Оформить заказ
           </button>
         </div>
       </form>
@@ -99,12 +100,13 @@ export default {
 </script>
 
 <style>
-  .container {
-    position: relative;
-  }
-  .loading {
-    position: absolute;
-    left: 50%;
-    top: 30px;
-  }
+.container {
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 30px;
+}
 </style>
