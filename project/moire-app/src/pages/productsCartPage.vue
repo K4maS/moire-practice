@@ -26,11 +26,11 @@
       </div>
     </div>
 
-    <section class="cart" v-if="getLoadingProcess">
+    <section class="cart loading" v-if="getLoadingProcess">
       <spinnerBlock>
       </spinnerBlock>
     </section>
-    <section class="cart" v-else-if="getLoadingError" >
+    <section class="cart" v-if="getLoadingError" >
       <refreshBlock @click="refresh()"></refreshBlock>
     </section>
     <section class="cart" v-else>
@@ -99,7 +99,12 @@ export default {
 </script>
 
 <style>
+  .container {
+    position: relative;
+  }
   .loading {
-    grid-column: span 2;
+    position: absolute;
+    left: 50%;
+    top: 30px;
   }
 </style>
