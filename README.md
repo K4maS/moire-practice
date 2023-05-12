@@ -14,3 +14,6 @@
 ## Комманды в (репазитории bank-app):
  - Сборка репазитория - `vue build`;
  - DEV сборка  репазитория, вместе с DEV-сервером - `vue serve`;
+ - 
+## Ссылка для просмотра приложения 
+https://k4mas.github.io/moire-practice-page/
